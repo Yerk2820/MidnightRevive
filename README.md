@@ -1,20 +1,121 @@
-# MidnightRevive (Paper 26.3, Java 25)
+# 🌙 MidnightRevive
 
-Build: `gradle build` (Gradle 9.1+ for Java 25) -> `build/libs/MidnightRevive-4.3.0.jar` -> drop in `plugins/`.
+**Death isn't the end... but you'll have to wait until midnight.**
 
-Notes
-- Don't set `hardcore=true`; the plugin replaces that mechanic. Leave keepInventory false.
-- Data: plugins/MidnightRevive/players.yml (+ .bak). Timezone and limbo spot: config.yml.
-- Clicking Respawn can't be blocked via the API; dead players respawn into a frozen,
-  invisible spectator hold at spawn and can't act until 00:00.
+MidnightRevive is a Minecraft plugin for **Paper 26.3** that introduces a unique death system to your server. Players who die must wait until midnight before they can return to the game.
 
-1.0.2: dead players can no longer leave limbo through nether/end portals (PlayerPortalEvent is blocked; it is not covered by PlayerTeleportEvent listeners). World changes are re-enforced and dead players are checked every 5 ticks.
+## ✨ Features
 
-## 4.3.0 - event mode reworked
-`event-mode.enabled: true` in config.yml (default false). Dead players can then watch living players in first person, but **only through `/watch`**:
-- `/watch <player>`, `/watch next`, `/watch prev`, `/watch stop` (alias `/spectate`). Permission `midnightrevive.watch` (default: everyone, only works while dead).
-- Nobody is attached automatically anymore (`auto-attach` was removed). A dead player waits frozen in limbo until they use `/watch`.
-- Left-click, sneaking and the spectator menu ("Teleport to Player") are blocked for dead players, with event mode on **and** off.
-- The camera is locked to the watched player (no free flight) and follows through portals, world changes and teleports.
-- Only living players can be watched. If the target dies or leaves, the viewer returns to limbo and sees a message.
-Existing config.yml files keep working: options that are missing fall back to the built-in defaults. Replace the file to get the new comments.
+- **Midnight Revival** – Dead players are revived at 00:00.
+- **Spectator Limbo** – Dead players are held at the world's spawn point while waiting.
+- **Event Mode** – Allows dead players to watch living players through the `/watch` command.
+- **Configurable** – Customize the plugin through `config.yml`.
+- **Dead Player Restrictions** – Prevents dead players from interacting or escaping limbo.
+
+## 📦 Requirements
+
+- Minecraft **Paper 26.3**
+- **Java 25**
+- **Gradle 9.1+** (for building from source)
+
+## 🔧 Installation
+
+1. Download the latest `MidnightRevive` release.
+2. Place the `.jar` file in your server's `plugins/` folder.
+3. Restart your server.
+4. Configure the plugin in `plugins/MidnightRevive/config.yml`.
+
+## 🛠️ Building from Source
+
+Clone or download this repository, then run:
+
+```bash
+gradle build
+```
+
+The compiled plugin will be located at:
+
+```text
+build/libs/MidnightRevive-4.3.0.jar
+```
+
+Place this `.jar` file in your server's `plugins/` folder.
+
+## ⚙️ Important Configuration Notes
+
+- **Do not** set `hardcore=true`. MidnightRevive replaces that mechanic.
+- Keep `keepInventory` set to `false`.
+- Player data is stored in `plugins/MidnightRevive/players.yml`.
+- A backup is also maintained as `players.yml.bak`.
+- The timezone and limbo location can be configured in `config.yml`.
+
+### How the Respawn System Works
+
+Minecraft's API does not allow the plugin to block the Respawn button itself. Instead, dead players respawn into a frozen, invisible spectator state at the world's spawn point.
+
+They cannot interact or move freely until the next revival at **00:00**.
+
+## 👁️ Event Mode (4.3.0)
+
+Event Mode allows dead players to watch living players in first person.
+
+Enable it in `config.yml`:
+
+```yaml
+event-mode:
+  enabled: true
+```
+
+It is disabled by default.
+
+### Commands
+
+| Command | Description |
+|---|---|
+| `/watch <player>` | Watch a specific player |
+| `/watch next` | Watch the next available player |
+| `/watch prev` | Watch the previous player |
+| `/watch stop` | Stop watching and return to limbo |
+
+`/spectate` is an alias for `/watch`.
+
+**Permission:** `midnightrevive.watch`
+
+By default, everyone has this permission. The commands only work while the player is dead.
+
+### Event Mode Details
+
+- Dead players are never attached to a player automatically.
+- Players remain frozen in limbo until they use `/watch`.
+- Left-clicking, sneaking and the spectator menu's **Teleport to Player** option are blocked for dead players.
+- The camera is locked to the watched player; free flight is disabled.
+- The camera follows the target through portals, world changes and teleports.
+- Only living players can be watched.
+- If the watched player dies or leaves, the viewer returns to limbo and receives a message.
+
+## 📋 Version History
+
+### 4.3.0 – Event Mode Reworked
+
+- Reworked Event Mode.
+- Added manual player watching through `/watch`.
+- Removed automatic player attachment (`auto-attach`).
+- Improved camera locking and tracking.
+- Added additional restrictions for dead players.
+
+### 1.0.2 – Portal Protection
+
+- Dead players can no longer escape limbo through Nether or End portals.
+- `PlayerPortalEvent` is blocked separately because `PlayerTeleportEvent` listeners do not cover it.
+- World changes are re-enforced.
+- Dead players are checked every 5 ticks.
+
+## 🔄 Configuration Compatibility
+
+Existing `config.yml` files remain compatible.
+
+If an option is missing, MidnightRevive automatically uses its built-in default value. Replace your existing configuration file if you want to see the latest comments and explanations.
+
+---
+
+**Enjoy MidnightRevive!** 🌙
