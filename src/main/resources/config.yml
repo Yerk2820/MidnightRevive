@@ -58,7 +58,7 @@ dead:
 
 
 # -------------------------------------------------------------------------------------
-#  CHAT / TAB LIST / ACTIONBAR
+#  CHAT / TAB LIST / BAR
 # -------------------------------------------------------------------------------------
 
 # How dead players look in the TAB list.
@@ -70,6 +70,20 @@ tablist:
 chat:
   prefix-enabled: true
   prefix: "&c[DEAD] &r"
+
+# Countdown display mode: actionbar, bossbar, off
+countdown:
+  display: "actionbar"
+
+bossbar:
+  # Colors: RED, BLUE, GREEN, YELLOW, PURPLE, PINK, WHITE
+  color: "RED"
+
+  # Styles: SOLID, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20
+  style: "SOLID"
+
+  # Use {time} for the remaining time
+  text: "&c☽ Revival in {time}"
 
 # Countdown shown above the hotbar to dead players.
 actionbar:
@@ -114,8 +128,17 @@ revive:
 #  MESSAGES
 # -------------------------------------------------------------------------------------
 messages:
-  # Sent when a player joins, respawns or is held as dead.
-  dead-notice: "&cYou are dead until {revive-time} (in {time})."
+  # Message shown to dead players
+  dead-notice: "&c☠ You died! &7You will be revived at &e{revive-time}&7."
+
+  # Extra instructions shown only when Event Mode is enabled
+  event-dead-notice:
+    - "&d✦ Event Mode is enabled!"
+    - "&7You can spectate living players:"
+    - "&f/watch <player> &8- &7Watch a player"
+    - "&f/watch next &8- &7Next player"
+    - "&f/watch prev &8- &7Previous player"
+    - "&f/watch stop &8- &7Stop watching"
   # Actionbar text for dead players when event mode is OFF.
   actionbar: "&cYou are dead. Revival in {time}"
   # Sent to a player when they are revived.

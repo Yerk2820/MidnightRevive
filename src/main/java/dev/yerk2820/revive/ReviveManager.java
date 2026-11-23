@@ -37,6 +37,7 @@ final class ReviveManager {
     private LocalTime reviveTime = LocalTime.MIDNIGHT;
     private long lastBoundary = -1;
     private BukkitTask task;
+    private CountdownBossBar countdownBossBar;
     private int counter;
 
     ReviveManager(MidnightRevive plugin, PlayerStore store) {
@@ -54,6 +55,7 @@ final class ReviveManager {
 
     void start() {
         loadConfig();
+        countdownBossBar = new CountdownBossBar(this);
         lastBoundary = -1;
         rollover();
         for (Player p : Bukkit.getOnlinePlayers()) handleJoin(p);
@@ -63,6 +65,11 @@ final class ReviveManager {
     void stop() {
         if (task != null) task.cancel();
         task = null;
+        if (countdownBossBar != null) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                countdownBossBar.hide(p);
+            }
+        }
         for (UUID id : new ArrayList<>(tabMarked)) {
             Player p = Bukkit.getPlayer(id);
             if (p != null) p.playerListName(null);
@@ -102,9 +109,19 @@ final class ReviveManager {
         }
         if (++counter % 4 != 0) return;
         int every = Math.max(1, plugin.getConfig().getInt("actionbar.interval-seconds"));
-        boolean bar = plugin.getConfig().getBoolean("actionbar.enabled") && (counter / 4) % every == 0;
+        boolean bar = countdownDisplay().equals("actionbar") && (counter / 4) % every == 0;
+        String display = countdownDisplay();
+
+        if (display.equals("bossbar")) {
+            countdownBossBar.update();
+        }
         for (Player p : Bukkit.getOnlinePlayers()) {
             refreshTab(p);
+            if (display.equals("bossbar") && isDead(p.getUniqueId())) {
+                countdownBossBar.show(p);
+            } else {
+                countdownBossBar.hide(p);
+            }
             if (isDead(p.getUniqueId())) {
                 if (bar) {
                     Component c;
@@ -189,9 +206,33 @@ final class ReviveManager {
 
     String untilRevive() {
         ZonedDateTime now = ZonedDateTime.now(zone);
-        ZonedDateTime next = lastBoundary().toLocalDate().plusDays(1).atTime(reviveTime).atZone(zone);
+        ZonedDateTime next = lastBoundary().toLocalDate()
+                .plusDays(1).atTime(reviveTime).atZone(zone);
+
         long s = Math.max(0, Duration.between(now, next).getSeconds());
-        return String.format("%02d:%02d:%02d", s / 3600, (s % 3600) / 60, s % 60);
+
+        return String.format("%02d:%02d:%02d",
+                s / 3600, (s % 3600) / 60, s % 60);
+    } // <-- DEZE ACCOLADE ONTBRAK
+
+    float countdownProgress() {
+        ZonedDateTime now = ZonedDateTime.now(zone);
+
+        ZonedDateTime previous = lastBoundary();
+
+        ZonedDateTime next = previous.toLocalDate()
+                .plusDays(1)
+                .atTime(reviveTime)
+                .atZone(zone);
+
+        long total = Duration.between(previous, next).getSeconds();
+        long remaining = Duration.between(now, next).getSeconds();
+
+        if (total <= 0) return 0.0f;
+
+        float progress = (float) remaining / total;
+
+        return Math.max(0.0f, Math.min(1.0f, progress));
     }
 
     String reviveTimeText() {
@@ -272,6 +313,14 @@ final class ReviveManager {
 
     void notifyDead(Player p) {
         send(p, "dead-notice");
+
+        if (eventMode()) {
+            for (String line : plugin.getConfig()
+                    .getStringList("messages.event-dead-notice")) {
+
+                p.sendMessage(LEGACY.deserialize(line));
+            }
+        }
     }
 
     /** Called from PlayerRespawnEvent for a player whose record is ALIVE. */
@@ -317,6 +366,20 @@ final class ReviveManager {
 
     boolean eventMode() {
         return plugin.getConfig().getBoolean("event-mode.enabled", false);
+    }
+
+    String countdownDisplay() {
+        String fallback = plugin.getConfig().getBoolean("actionbar.enabled", true)
+                ? "actionbar" : "off";
+
+        String display = plugin.getConfig()
+                .getString("countdown.display", fallback);
+
+        return switch (display == null ? fallback : display.toLowerCase(java.util.Locale.ROOT)) {
+            case "bossbar" -> "bossbar";
+            case "off" -> "off";
+            default -> "actionbar";
+        };
     }
 
     /** A dead viewer may only watch a living, online player in survival-like state. */

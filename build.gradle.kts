@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "dev.yerk2820"
-version = "4.3.0"
+version = "4.4.1"
 
 repositories {
     mavenCentral()
