@@ -1,0 +1,143 @@
+# =====================================================================================
+#  MidnightRevive 4.3.0 - config.yml            Author: Yerk2820      Paper 26.3
+# =====================================================================================
+#  Players who die stay dead until a fixed time of day (default 00:00 real time).
+#  While dead they are held in a frozen spectator "limbo" and cannot act.
+#
+#  Colors      : use & codes (&c red, &7 gray, &a green, &e yellow, &f white, &r reset).
+#  Placeholders: {time}        time left until revival (HH:mm:ss)
+#                {revive-time} the revive time from 'revive-time' below
+#                {player}      the player's name
+#                {target}      the player being watched (event mode messages only)
+#  An empty message ("") turns that message off.
+#
+#  Missing options fall back to the built-in defaults, so after updating you do NOT have
+#  to delete this file. Use /midnightrevive reload after editing.
+#  Do not enable vanilla hardcore and keep keepInventory false - this plugin replaces them.
+# =====================================================================================
+
+
+# -------------------------------------------------------------------------------------
+#  TIME
+# -------------------------------------------------------------------------------------
+
+# Time zone used for the revive time. "system" = the time zone of the server machine,
+# or any IANA id such as "Europe/Amsterdam".
+timezone: system
+
+# Time of day on which every dead player is revived (24h format, HH:mm).
+# A player who died before the most recent revive time is alive again.
+revive-time: "00:00"
+
+
+# -------------------------------------------------------------------------------------
+#  LIMBO (where dead players are held)
+# -------------------------------------------------------------------------------------
+# Dead players are frozen here in spectator mode. In event mode they are only brought here
+# when they are not watching anyone (before they use /watch, or after /watch stop).
+limbo:
+  # World name. Leave empty ("") to use the main world's spawn.
+  world: ""
+  # Coordinates of the holding spot (only used when 'world' is set).
+  x: 0.5
+  y: 100
+  z: 0.5
+
+
+# -------------------------------------------------------------------------------------
+#  RESTRICTIONS FOR DEAD PLAYERS
+# -------------------------------------------------------------------------------------
+dead:
+  # Can dead players use the chat?
+  allow-chat: true
+  # Block commands for dead players? If true, only the commands in 'allowed-commands' work.
+  # (/watch and /spectate are always allowed in event mode.)
+  restrict-commands: false
+  # Commands dead players may use when 'restrict-commands' is true (without the slash).
+  allowed-commands: [msg, tell, w, r, reply, help]
+
+
+# -------------------------------------------------------------------------------------
+#  CHAT / TAB LIST / ACTIONBAR
+# -------------------------------------------------------------------------------------
+
+# How dead players look in the TAB list.
+tablist:
+  enabled: true
+  prefix: "&c[DEAD] &7"
+
+# Prefix in front of a dead player's name in chat (other plugins' chat formats keep working).
+chat:
+  prefix-enabled: true
+  prefix: "&c[DEAD] &r"
+
+# Countdown shown above the hotbar to dead players.
+actionbar:
+  enabled: true
+  # How often it refreshes, in seconds.
+  interval-seconds: 1
+
+
+# -------------------------------------------------------------------------------------
+#  EVENT MODE
+# -------------------------------------------------------------------------------------
+# When ON, dead players can watch living players in first person - but ONLY through /watch:
+#
+#    /watch <player>   attach to that living player
+#    /watch next       attach to the next living player (alphabetical)
+#    /watch prev       attach to the previous living player
+#    /watch stop       let go and go back to the frozen limbo
+#
+# Rules while event mode is on:
+#  - Nobody is attached automatically. A dead player sits frozen in limbo until they use /watch.
+#  - Left-clicking players, sneaking and the spectator menu ("Teleport to Player") do NOT work.
+#    These are blocked the same way when event mode is OFF.
+#  - A dead player cannot fly around; the camera is locked to the watched player and follows
+#    them through portals, world changes and teleports.
+#  - Only living players can be watched. If the target dies or leaves, the viewer goes back to
+#    limbo and must pick someone else with /watch.
+#  - Revival at the revive time works as normal.
+# Permission: midnightrevive.watch (default: everyone; it only does something for dead players).
+event-mode:
+  enabled: false
+
+
+# -------------------------------------------------------------------------------------
+#  REVIVAL
+# -------------------------------------------------------------------------------------
+revive:
+  # Move revived players to their bed / respawn anchor, or else the world spawn.
+  teleport-to-respawn: true
+
+
+# -------------------------------------------------------------------------------------
+#  MESSAGES
+# -------------------------------------------------------------------------------------
+messages:
+  # Sent when a player joins, respawns or is held as dead.
+  dead-notice: "&cYou are dead until {revive-time} (in {time})."
+  # Actionbar text for dead players when event mode is OFF.
+  actionbar: "&cYou are dead. Revival in {time}"
+  # Sent to a player when they are revived.
+  revived: "&aIt is {revive-time}. You have been revived."
+  # Broadcast to everyone when a player dies / is revived. Empty = off.
+  broadcast-death: ""   # example: "&7{player} died and returns at {revive-time}."
+  broadcast-revive: ""  # example: "&a{player} is back from the dead!"
+  # Sent when a dead player is blocked.
+  commands-blocked: "&cYou can't use that command while dead."
+  chat-blocked: "&cYou can't chat while dead."
+
+  # ---- Event mode ----
+  # Actionbar while watching someone / while attached to nobody.
+  event-actionbar-watching: "&c☠ &7{time} &8| &fWatching &e{target} &8| &7/watch <name|next|prev|stop>"
+  event-actionbar-none: "&c☠ &7{time} &8| &7Use &f/watch <name> &7to watch a living player"
+  # Reply to /watch with no arguments.
+  event-usage: "&7Usage: &f/watch <player|next|prev|stop>"
+  # Reply to /watch stop.
+  event-stopped: "&7You stopped watching. Use &f/watch <name> &7to watch someone."
+  # Sent when the watched player died or left and the viewer was sent back to limbo.
+  event-target-lost: "&eYour target is no longer available. Use &f/watch <name> &eto pick someone else."
+  # Sent when /watch is used while alive, or while event mode is off.
+  event-not-available: "&cYou can only use this while dead and when event mode is on."
+  # Sent when the named player is unknown, dead or not online (or nobody is alive to watch).
+  event-no-target: "&cNo living player to watch (or unknown name)."

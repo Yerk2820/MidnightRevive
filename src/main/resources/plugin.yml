@@ -1,0 +1,32 @@
+name: MidnightRevive
+version: '${version}'
+main: dev.yerk2820.revive.MidnightRevive
+api-version: '26.3'
+description: Players stay dead until 00:00 real time.
+author: Yerk2820
+commands:
+  midnightrevive:
+    description: MidnightRevive admin command
+    aliases: [mrevive]
+    usage: /<command> <status|revive|reload|debug>
+  watch:
+    description: Event mode - switch the player you are watching while dead
+    aliases: [spectate]
+    usage: /<command> <player|next|prev|stop>
+    permission: midnightrevive.watch
+permissions:
+  midnightrevive.watch:
+    description: Use /watch while dead (event mode only; living players cannot use it anyway)
+    default: true
+  midnightrevive.admin:
+    default: op
+    children:
+      midnightrevive.revive: true
+      midnightrevive.reload: true
+      midnightrevive.debug: true
+  midnightrevive.revive:
+    default: op
+  midnightrevive.reload:
+    default: op
+  midnightrevive.debug:
+    default: op
