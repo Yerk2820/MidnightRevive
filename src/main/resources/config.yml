@@ -1,5 +1,5 @@
 # =====================================================================================
-#  MidnightRevive 4.3.0 - config.yml            Author: Yerk2820      Paper 26.3
+#  MidnightRevive - config.yml                  Author: Yerk2820      Paper 26.3
 # =====================================================================================
 #  Players who die stay dead until a fixed time of day (default 00:00 real time).
 #  While dead they are held in a frozen spectator "limbo" and cannot act.
@@ -11,10 +11,21 @@
 #                {target}      the player being watched (event mode messages only)
 #  An empty message ("") turns that message off.
 #
-#  Missing options fall back to the built-in defaults, so after updating you do NOT have
-#  to delete this file. Use /midnightrevive reload after editing.
+#  UPDATING: you never have to delete or edit this file after an update. When a new version
+#  changes the config, the plugin saves your old file as config.yml.bak-<date>, writes the
+#  new config (with all new options and comments) and copies your own values into it.
+#  Use /midnightrevive reload after editing.
 #  Do not enable vanilla hardcore and keep keepInventory false - this plugin replaces them.
+#
+#  CREDITS
+#   - Written by Yerk2820. Licensed under GPL-3.0 (see the LICENSE file in the repository).
+#   - Built on the Paper API and the Adventure library (dependencies, not copied code).
+#   - Code taken from other plugins: NONE. If code from another plugin is ever used,
+#     it will be listed here with the plugin name and author.
 # =====================================================================================
+
+# Internal number used by the automatic config updater. Do NOT change this.
+config-version: 2
 
 
 # -------------------------------------------------------------------------------------
@@ -71,10 +82,15 @@ chat:
   prefix-enabled: true
   prefix: "&c[DEAD] &r"
 
-# Countdown display mode: actionbar, bossbar, off
+# How the revival countdown is shown to dead players. This is the ONE switch for it:
+#   actionbar = text above the hotbar (see 'actionbar' below and the messages at the bottom)
+#   bossbar   = a bar at the top of the screen that slowly drains until the revive time
+#               (see 'bossbar' below). In event mode the /watch info is still shown in the actionbar.
+#   off       = no countdown
 countdown:
   display: "actionbar"
 
+# Only used when countdown.display is "bossbar".
 bossbar:
   # Colors: RED, BLUE, GREEN, YELLOW, PURPLE, PINK, WHITE
   color: "RED"
@@ -82,13 +98,12 @@ bossbar:
   # Styles: SOLID, NOTCHED_6, NOTCHED_10, NOTCHED_12, NOTCHED_20
   style: "SOLID"
 
-  # Use {time} for the remaining time
+  # Text on the bar. {time} = time left until revival.
   text: "&c☽ Revival in {time}"
 
-# Countdown shown above the hotbar to dead players.
+# Only used when countdown.display is "actionbar".
 actionbar:
-  enabled: true
-  # How often it refreshes, in seconds.
+  # How often the text refreshes, in seconds.
   interval-seconds: 1
 
 

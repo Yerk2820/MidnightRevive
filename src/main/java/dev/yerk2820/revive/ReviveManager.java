@@ -109,8 +109,10 @@ final class ReviveManager {
         }
         if (++counter % 4 != 0) return;
         int every = Math.max(1, plugin.getConfig().getInt("actionbar.interval-seconds"));
-        boolean bar = countdownDisplay().equals("actionbar") && (counter / 4) % every == 0;
         String display = countdownDisplay();
+        // Actionbar countdown, or (event mode) the /watch info next to a bossbar.
+        boolean bar = (display.equals("actionbar") || (eventMode() && display.equals("bossbar")))
+                && (counter / 4) % every == 0;
 
         if (display.equals("bossbar")) {
             countdownBossBar.update();
@@ -128,8 +130,10 @@ final class ReviveManager {
                     if (eventMode()) {
                         Player t = watchTarget(p);
                         c = t != null ? msg("event-actionbar-watching", "target", t.getName()) : msg("event-actionbar-none");
-                    } else {
+                    } else if (display.equals("actionbar")) {
                         c = msg("actionbar");
+                    } else {
+                        c = null;
                     }
                     if (c != null) p.sendActionBar(c);
                 }
@@ -369,13 +373,9 @@ final class ReviveManager {
     }
 
     String countdownDisplay() {
-        String fallback = plugin.getConfig().getBoolean("actionbar.enabled", true)
-                ? "actionbar" : "off";
+        String display = plugin.getConfig().getString("countdown.display", "actionbar");
 
-        String display = plugin.getConfig()
-                .getString("countdown.display", fallback);
-
-        return switch (display == null ? fallback : display.toLowerCase(java.util.Locale.ROOT)) {
+        return switch (display == null ? "actionbar" : display.toLowerCase(java.util.Locale.ROOT)) {
             case "bossbar" -> "bossbar";
             case "off" -> "off";
             default -> "actionbar";

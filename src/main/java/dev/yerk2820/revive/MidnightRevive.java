@@ -9,7 +9,7 @@ public final class MidnightRevive extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        ConfigUpdater.update(this);
         store = new PlayerStore(this);
         if (!store.load()) {
             getLogger().severe("players.yml and its backup are unreadable. Disabling so no state is overwritten. "

@@ -36,7 +36,7 @@ gradle build
 The compiled plugin will be located at:
 
 ```text
-build/libs/MidnightRevive-4.3.0.jar
+build/libs/MidnightRevive-4.4.2.jar
 ```
 
 Place this `.jar` file in your server's `plugins/` folder.
@@ -55,7 +55,7 @@ Minecraft's API does not allow the plugin to block the Respawn button itself. In
 
 They cannot interact or move freely until the next revival at **00:00**.
 
-## 👁️ Event Mode (4.3.0)
+## 👁️ Event Mode
 
 Event Mode allows dead players to watch living players in first person.
 
@@ -95,6 +95,17 @@ By default, everyone has this permission. The commands only work while the playe
 
 ## 📋 Version History
 
+### 4.4.2 – Automatic Config Updates
+
+- `config.yml` is now updated automatically. When a new version changes the config, the old file is saved as `config.yml.bak-<date>`, the new config (with all comments) is written, and your own values are copied over. Nobody has to delete the old config anymore.
+- `countdown.display` (`actionbar`, `bossbar`, `off`) is now the only switch for the countdown. `actionbar.enabled` was removed; old configs with `actionbar.enabled: false` are migrated to `countdown.display: "off"`.
+- In event mode the `/watch` info stays visible in the actionbar when the bossbar is used.
+- Added a credits section to the config.
+
+### 4.4.1 – Countdown Bossbar
+
+- Added the countdown bossbar and the event mode help message for dead players.
+
 ### 4.3.0 – Event Mode Reworked
 
 - Reworked Event Mode.
@@ -112,9 +123,7 @@ By default, everyone has this permission. The commands only work while the playe
 
 ## 🔄 Configuration Compatibility
 
-Existing `config.yml` files remain compatible.
-
-If an option is missing, MidnightRevive automatically uses its built-in default value. Replace your existing configuration file if you want to see the latest comments and explanations.
+You never need to delete your old `config.yml`. On startup MidnightRevive compares the `config-version` in your file with the one in the plugin. If it is older, your file is backed up (`config.yml.bak-<date>`), replaced by the new default config with all new options and comments, and your own values are copied into it. Options that were removed are dropped; the backup keeps everything.
 
 ---
 
